@@ -19,4 +19,6 @@ public class Region {
 
     private Integer status;
 
+    private Integer level;
+
 }

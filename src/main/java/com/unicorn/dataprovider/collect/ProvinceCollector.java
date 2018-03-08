@@ -4,20 +4,25 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.unicorn.dataprovider.model.Region;
+import com.unicorn.dataprovider.service.RegionService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-//@Component
+@Component
 public class ProvinceCollector implements Callable {
 
+    @Autowired
+    private RegionService regionService;
 
-    public List<Region> call() {
+    public Object call() {
 
         try {
-            Thread.sleep(100L);
+            Thread.sleep(1000L);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
@@ -42,13 +47,16 @@ public class ProvinceCollector implements Callable {
                     region.setLink(links[i]);
                     region.setCode(links[i].replaceAll(".html", ""));
                     region.setName(names[i]);
+                    region.setLevel(1);
                     regionList.add(region);
+
+                    regionService.save(region);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             return this.call();
         }
-        return regionList;
+        return null;
     }
 }
