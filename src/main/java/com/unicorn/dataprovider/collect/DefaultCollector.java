@@ -4,7 +4,6 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.unicorn.dataprovider.RegionLevel;
-import com.unicorn.dataprovider.Runner;
 import com.unicorn.dataprovider.model.Region;
 import com.unicorn.dataprovider.service.RegionService;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Scope("prototype")
@@ -48,6 +48,8 @@ public class DefaultCollector implements Callable {
         while (true) {
 
             OkHttpClient client = new OkHttpClient();
+
+            client.setReadTimeout(3, TimeUnit.SECONDS);
 
             boolean once = false;
 
