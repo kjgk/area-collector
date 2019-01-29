@@ -22,25 +22,21 @@ public class RegionService {
 
     private final static Logger logger = LoggerFactory.getLogger(RegionService.class);
 
-    public Region getRegion(String code) {
-
-        List regions = jdbcTemplate.queryForList("select * from region where code = ?", code);
-        if (regions.size() > 0) {
-            Map data = (Map) regions.get(0);
-            Region region = new Region();
-            region.setId((String) data.get("id"));
-            region.setName((String) data.get("name"));
-            region.setCode((String) data.get("code"));
-            region.setParent_id((String) data.get("parent_id"));
-            region.setStatus((Integer) data.get("status"));
-            return region;
-        }
-        return null;
-    }
 
     public List<Region> getRegion(Integer level) {
 
-        List regions = jdbcTemplate.queryForList("select * from region where level = ?", level);
+        List regions = jdbcTemplate.queryForList("select * from region where level = ? order by code", level);
+        return mapRegion(regions);
+    }
+
+    public List<Region> getRegionByParentId(String parentId) {
+
+        List regions = jdbcTemplate.queryForList("select * from region where parent_id = ? order by code", parentId);
+        return mapRegion(regions);
+    }
+
+    private List<Region> mapRegion(List regions) {
+
         List<Region> regionList = new ArrayList();
         for (Object o : regions) {
             Map data = (Map) o;
@@ -56,6 +52,7 @@ public class RegionService {
         }
         return regionList;
     }
+
 
     public void save(Region region) {
 
