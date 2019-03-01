@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class Region {
 
-    private String id;
+    private Long id;
 
     private String name;
 
@@ -15,7 +15,7 @@ public class Region {
 
     private String link;
 
-    private String parent_id;
+    private Long parent_id;
 
     private Integer status;
 

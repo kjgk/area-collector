@@ -23,13 +23,12 @@ import java.util.concurrent.TimeUnit;
 @Scope("prototype")
 public class DefaultCollector implements Callable {
 
+    @Autowired
+    private RegionService regionService;
 
     private final static Logger logger = LoggerFactory.getLogger(DefaultCollector.class);
 
     private Integer level;
-
-    @Autowired
-    private RegionService regionService;
 
     private List<Region> regionList;
 
@@ -83,6 +82,7 @@ public class DefaultCollector implements Callable {
                     logger.info("采集成功【" + region.getName() + "】");
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     logger.error("采集失败【" + region.getName() + "】，" + e.toString());
                 }
             }
@@ -124,11 +124,11 @@ public class DefaultCollector implements Callable {
         }
         if (level == RegionLevel.COUNTY) {
 
-            // 不辖县、区、县级市的地级市 如：东莞市
-            if (responseText.indexOf("市辖区") == -1) {
-                level = level + 1;
-                townCity = true;
-            } else {
+            // todo 不辖县、区、县级市的地级市 如：东莞市
+//            if (responseText.indexOf("市辖区") == -10) {
+//                level = level + 1;
+//                townCity = true;
+//            } else {
                 for (String row : StringUtils.substringsBetween(responseText, "<tr class='countytr'>", "</tr>")) {
                     if (row.indexOf("市辖区") >= 0) {
                         continue;
@@ -153,7 +153,7 @@ public class DefaultCollector implements Callable {
                     region.setLevel(level);
                     regionList.add(region);
                 }
-            }
+//            }
         }
         if (level == RegionLevel.TOWN) {
             for (String row : StringUtils.substringsBetween(responseText, "<tr class='towntr'>", "</tr>")) {

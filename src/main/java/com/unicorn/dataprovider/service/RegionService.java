@@ -1,5 +1,6 @@
 package com.unicorn.dataprovider.service;
 
+import com.unicorn.dataprovider.SnowflakeIdWorker;
 import com.unicorn.dataprovider.model.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class RegionService {
@@ -19,9 +19,10 @@ public class RegionService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private SnowflakeIdWorker snowflakeIdWorker;
 
     private final static Logger logger = LoggerFactory.getLogger(RegionService.class);
-
 
     public List<Region> getRegion(Integer level) {
 
@@ -29,7 +30,7 @@ public class RegionService {
         return mapRegion(regions);
     }
 
-    public List<Region> getRegionByParentId(String parentId) {
+    public List<Region> getRegionByParentId(Long parentId) {
 
         List regions = jdbcTemplate.queryForList("select * from region where parent_id = ? order by code", parentId);
         return mapRegion(regions);
@@ -41,10 +42,10 @@ public class RegionService {
         for (Object o : regions) {
             Map data = (Map) o;
             Region region = new Region();
-            region.setId((String) data.get("id"));
+            region.setId((Long) data.get("id"));
             region.setName((String) data.get("name"));
             region.setCode((String) data.get("code"));
-            region.setParent_id((String) data.get("parent_id"));
+            region.setParent_id((Long) data.get("parent_id"));
             region.setStatus((Integer) data.get("status"));
             region.setLevel((Integer) data.get("level"));
             region.setLink((String) data.get("link"));
@@ -56,7 +57,7 @@ public class RegionService {
 
     public void save(Region region) {
 
-        region.setId(UUID.randomUUID().toString().replaceAll("-", "").toLowerCase());
+        region.setId(snowflakeIdWorker.nextId());
         region.setStatus(0);
 
         String insertSql = "INSERT INTO region(\n" +
@@ -82,7 +83,7 @@ public class RegionService {
         }
     }
 
-    public void complete(String id) {
+    public void complete(Long id) {
 
         jdbcTemplate.update("update region set status = 1 where id = ?", id);
     }

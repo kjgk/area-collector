@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public class MainProcess {
 
     private final static Logger logger = LoggerFactory.getLogger(MainProcess.class);
 
-    @Scheduled(fixedDelay = 10000000000l)
+    //@Scheduled(fixedDelay = 10000000000l)
     public void run() throws Exception {
 
         List<Region> regionList = regionService.getRegion(RegionLevel.PROVINCE);
